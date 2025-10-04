@@ -43,9 +43,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const storedUser = localStorage.getItem('user');
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
+    const storedUserId = localStorage.getItem('userId');
+    if (storedUserId) {
+      const foundUser = MOCK_USERS.find(u => u.id === storedUserId);
+      if (foundUser) {
+        setUser(foundUser);
+      }
     }
     setIsLoading(false);
   }, []);
@@ -57,7 +60,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const foundUser = MOCK_USERS.find(u => u.email === email && u.role === role);
     if (foundUser) {
       setUser(foundUser);
-      localStorage.setItem('user', JSON.stringify(foundUser));
+      localStorage.setItem('userId', foundUser.id);
     } else {
       throw new Error('Invalid credentials');
     }
@@ -83,13 +86,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     };
 
     setUser(newUser);
-    localStorage.setItem('user', JSON.stringify(newUser));
+    localStorage.setItem('userId', newUser.id);
     setIsLoading(false);
   };
 
   const logout = () => {
     setUser(null);
-    localStorage.removeItem('user');
+    localStorage.removeItem('userId');
   };
 
   return (
