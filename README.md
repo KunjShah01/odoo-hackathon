@@ -54,13 +54,47 @@ Fast run
 1. Clone the repo
 
 ```powershell
-git clone https://github.com/KunjShah01/odoo-hackathon.git
-cd odoo-hackathon
+Fast run
+
+1. Clone the repo
+
+    ```powershell
+    git clone https://github.com/KunjShah01/odoo-hackathon.git
+    cd odoo-hackathon
+    ```
+
+2. Start the database (use your preferred Postgres service) and run the SQL bootstrap scripts
+
+    ```powershell
+    cd database
+    psql -f db/init.sql -U postgres
+    psql -f db/seed.sql -U postgres
+    ```
+
+3. Start the backend (default: http://localhost:3001)
+
+    ```powershell
+    cd ..\backend
+    npm install
+    copy .env.example .env
+    # edit .env to set DB connection values if necessary
+    npm start
+    ```
+
+4. Start the frontend (default: http://localhost:5175)
+
+    ```powershell
+    cd ..\frontend
+    npm install
+    npm run dev -- --port 5175
+    ```
+
+5. Open the frontend in your browser and login with demo accounts (see Demo credentials section below).
 ```
 
 2. Start the database (use your preferred Postgres service) and run the SQL bootstrap scripts
 
-```powershell
+```
 cd database
 psql -f db/init.sql -U postgres
 psql -f db/seed.sql -U postgres
