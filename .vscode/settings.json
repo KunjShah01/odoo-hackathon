@@ -1,0 +1,33 @@
+{
+  // SQL Settings - Disable MSSQL linting for PostgreSQL files
+  "sql.linter.enabled": false,
+  
+  // Alternatively, configure for PostgreSQL
+  "mssql.intelliSense.enableErrorChecking": false,
+  
+  // File associations
+  "files.associations": {
+    "*.sql": "sql"
+  },
+  
+  // Markdown linting settings
+  "markdownlint.config": {
+    "MD022": false,  // Blanks around headings
+    "MD031": false,  // Blanks around fences
+    "MD032": false,  // Blanks around lists
+    "MD034": false,  // No bare URLs
+    "MD036": false,  // No emphasis as heading
+    "MD040": false,  // Fenced code language
+    "MD026": false   // No trailing punctuation
+  },
+  
+  // Editor settings
+  "editor.formatOnSave": false,
+  "editor.tabSize": 2,
+  
+  // PostgreSQL specific settings
+  "[sql]": {
+    "editor.defaultFormatter": null,
+    "editor.formatOnSave": false
+  }
+}
