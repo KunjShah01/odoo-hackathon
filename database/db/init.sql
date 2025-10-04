@@ -14,8 +14,11 @@ CREATE TABLE companies (
 CREATE TABLE users (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     company_id UUID NOT NULL REFERENCES companies(id) ON DELETE CASCADE,
+    first_name VARCHAR(255) NOT NULL,
+    last_name VARCHAR(255) NOT NULL,
     full_name VARCHAR(255) NOT NULL,
     email VARCHAR(255) UNIQUE NOT NULL,
+    password_hash VARCHAR(255),  -- For authentication
     role VARCHAR(50) NOT NULL CHECK (role IN ('employee','manager','admin','cfo')),
     is_manager_approver BOOLEAN DEFAULT false, -- matches PDF requirement
     manager_id UUID REFERENCES users(id),      -- hierarchy mapping
@@ -93,6 +96,18 @@ CREATE TABLE approvals (
     status VARCHAR(20) NOT NULL CHECK (status IN ('pending','approved','rejected')),
     comment TEXT,
     acted_at TIMESTAMPTZ
+);
+
+-- Approval workflows (simplified for hackathon)
+CREATE TABLE approval_workflows (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    expense_id UUID NOT NULL REFERENCES expenses(id),
+    approver_id UUID NOT NULL REFERENCES users(id),
+    status VARCHAR(20) NOT NULL DEFAULT 'pending' CHECK (status IN ('pending','approved','rejected')),
+    comments TEXT,
+    acted_at TIMESTAMPTZ,
+    created_at TIMESTAMPTZ DEFAULT now(),
+    updated_at TIMESTAMPTZ DEFAULT now()
 );
 
 -- Audit log

@@ -11,32 +11,32 @@ VALUES
 -- ============================================
 -- 2. CREATE USERS (Employee, Manager, CFO, Admin)
 -- ============================================
-INSERT INTO users (id, company_id, full_name, email, role, is_manager_approver, manager_id, created_at)
+INSERT INTO users (id, company_id, first_name, last_name, full_name, email, password_hash, role, is_manager_approver, manager_id, created_at)
 VALUES 
     -- Admin
     ('22222222-2222-2222-2222-222222222222', '11111111-1111-1111-1111-111111111111', 
-     'Sarah Admin', 'sarah.admin@techcorp.com', 'admin', false, NULL, now()),
+     'Sarah', 'Admin', 'Sarah Admin', 'sarah.admin@techcorp.com', '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'admin', false, NULL, now()),
     
     -- CFO
     ('33333333-3333-3333-3333-333333333333', '11111111-1111-1111-1111-111111111111', 
-     'Robert CFO', 'robert.cfo@techcorp.com', 'cfo', true, NULL, now()),
+     'Robert', 'CFO', 'Robert CFO', 'robert.cfo@techcorp.com', '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'cfo', true, NULL, now()),
     
     -- Manager
     ('44444444-4444-4444-4444-444444444444', '11111111-1111-1111-1111-111111111111', 
-     'Mike Manager', 'mike.manager@techcorp.com', 'manager', true, 
+     'Mike', 'Manager', 'Mike Manager', 'mike.manager@techcorp.com', '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'manager', true, 
      '33333333-3333-3333-3333-333333333333', now()),
     
     -- Employees
     ('55555555-5555-5555-5555-555555555555', '11111111-1111-1111-1111-111111111111', 
-     'Alice Employee', 'alice.employee@techcorp.com', 'employee', false, 
+     'Alice', 'Employee', 'Alice Employee', 'alice.employee@techcorp.com', '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'employee', false, 
      '44444444-4444-4444-4444-444444444444', now()),
      
     ('66666666-6666-6666-6666-666666666666', '11111111-1111-1111-1111-111111111111', 
-     'Bob Developer', 'bob.dev@techcorp.com', 'employee', false, 
+     'Bob', 'Developer', 'Bob Developer', 'bob.dev@techcorp.com', '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'employee', false, 
      '44444444-4444-4444-4444-444444444444', now()),
      
     ('77777777-7777-7777-7777-777777777777', '11111111-1111-1111-1111-111111111111', 
-     'Emma Designer', 'emma.designer@techcorp.com', 'employee', false, 
+     'Emma', 'Designer', 'Emma Designer', 'emma.designer@techcorp.com', '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'employee', false, 
      '44444444-4444-4444-4444-444444444444', now());
 
 -- ============================================
