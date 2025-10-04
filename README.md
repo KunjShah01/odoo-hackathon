@@ -122,6 +122,16 @@ npm run dev -- --port 5175
 
 ---
 
+## Design mockup
+
+The project includes a UI mockup used during the design phase. To show the mockup here, add an image named `mockup.png` to the `docs/` folder and it will be displayed below.
+
+![Design mockup](./docs/mockup.png)
+
+If you don't have the image yet, see `docs/ADD_MOCKUP_IMAGE.md` for where to place it and recommended image size (1920×600).
+
+---
+
 ## Architecture and components
 
 - frontend/: React + TypeScript + Vite
