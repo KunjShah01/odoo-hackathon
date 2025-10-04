@@ -1,0 +1,31 @@
+╔════════════════════════════════════════════════════════════════╗
+║         EXPENSEFLOW - LOGIN CREDENTIALS QUICK REFERENCE        ║
+╠════════════════════════════════════════════════════════════════╣
+║                                                                ║
+║  🔴 ADMIN                                                      ║
+║  Email:    sarah.admin@techcorp.com                           ║
+║  Password: password                                            ║
+║                                                                ║
+║  🟢 MANAGER                                                    ║
+║  Email:    mike.manager@techcorp.com                          ║
+║  Password: password                                            ║
+║                                                                ║
+║  🔵 EMPLOYEE                                                   ║
+║  Email:    alice.employee@techcorp.com                        ║
+║  Password: password                                            ║
+║                                                                ║
+║  💡 MORE EMPLOYEES:                                            ║
+║  • bob.dev@techcorp.com (password)                            ║
+║  • emma.designer@techcorp.com (password)                      ║
+║                                                                ║
+║  🟡 CFO                                                        ║
+║  Email:    robert.cfo@techcorp.com                            ║
+║  Password: password                                            ║
+║                                                                ║
+╠════════════════════════════════════════════════════════════════╣
+║  📍 FRONTEND: http://localhost:5175                            ║
+║  📍 BACKEND:  http://localhost:3001                            ║
+║                                                                ║
+║  ⚠️  ALL PASSWORDS ARE: password                               ║
+║  ⚠️  DEMO ACCOUNTS - NOT FOR PRODUCTION!                       ║
+╚════════════════════════════════════════════════════════════════╝

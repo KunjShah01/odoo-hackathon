@@ -1,34 +1,47 @@
-import React, { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardHeader } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
-import { StatusTag } from '../components/ui/StatusTag';
 import { Modal } from '../components/ui/Modal';
 import { TextArea } from '../components/ui/Input';
-import { useAuth } from '../context/AuthContext';
 import { useExpenseStore } from '../store/useExpenseStore';
-import { CheckCircle, XCircle, Eye } from 'lucide-react';
-import { Expense, Approval } from '../types';
+import { CheckCircle, XCircle } from 'lucide-react';
+import { Approval } from '../types';
 
 export function ManagerApprovals() {
-  const { user } = useAuth();
-  const { expenses, approvals, updateApproval } = useExpenseStore();
-  const [selectedApproval, setSelectedApproval] = useState<{ approval: Approval; expense: Expense } | null>(null);
+  const { approvals, approveExpense, rejectExpense, fetchPendingApprovals } = useExpenseStore();
+  const [selectedApproval, setSelectedApproval] = useState<Approval | null>(null);
   const [comments, setComments] = useState('');
 
-  const myApprovals = approvals.filter(a => a.approverId === user?.id);
-  const pendingApprovals = myApprovals.filter(a => a.status === 'pending');
+  useEffect(() => {
+    fetchPendingApprovals();
+  }, [fetchPendingApprovals]);
 
-  const handleDecision = (approvalId: string, status: 'approved' | 'rejected') => {
-    updateApproval(approvalId, status, comments);
-    setSelectedApproval(null);
-    setComments('');
+  const handleApprove = async (approvalId: string) => {
+    try {
+      await approveExpense(approvalId, comments || undefined);
+      setSelectedApproval(null);
+      setComments('');
+    } catch (err) {
+      console.error('Failed to approve expense:', err);
+    }
+  };
+
+  const handleReject = async (approvalId: string) => {
+    if (!comments.trim()) {
+      alert('Please provide a reason for rejection');
+      return;
+    }
+    try {
+      await rejectExpense(approvalId, comments);
+      setSelectedApproval(null);
+      setComments('');
+    } catch (err) {
+      console.error('Failed to reject expense:', err);
+    }
   };
 
   const openApprovalModal = (approval: Approval) => {
-    const expense = expenses.find(e => e.id === approval.expenseId);
-    if (expense) {
-      setSelectedApproval({ approval, expense });
-    }
+    setSelectedApproval(approval);
   };
 
   return (
@@ -42,25 +55,21 @@ export function ManagerApprovals() {
         <Card>
           <div className="px-6 py-4">
             <p className="text-sm text-slate-600 font-medium">Pending Approval</p>
-            <p className="text-3xl font-bold text-orange-600 mt-1">{pendingApprovals.length}</p>
+            <p className="text-3xl font-bold text-orange-600 mt-1">{approvals.length}</p>
           </div>
         </Card>
 
         <Card>
           <div className="px-6 py-4">
-            <p className="text-sm text-slate-600 font-medium">Approved</p>
-            <p className="text-3xl font-bold text-green-600 mt-1">
-              {myApprovals.filter(a => a.status === 'approved').length}
-            </p>
+            <p className="text-sm text-slate-600 font-medium">Approved Today</p>
+            <p className="text-3xl font-bold text-green-600 mt-1">0</p>
           </div>
         </Card>
 
         <Card>
           <div className="px-6 py-4">
-            <p className="text-sm text-slate-600 font-medium">Rejected</p>
-            <p className="text-3xl font-bold text-red-600 mt-1">
-              {myApprovals.filter(a => a.status === 'rejected').length}
-            </p>
+            <p className="text-sm text-slate-600 font-medium">Rejected Today</p>
+            <p className="text-3xl font-bold text-red-600 mt-1">0</p>
           </div>
         </Card>
       </div>
@@ -97,64 +106,46 @@ export function ManagerApprovals() {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-200">
-              {pendingApprovals.length === 0 ? (
+              {approvals.length === 0 ? (
                 <tr>
                   <td colSpan={7} className="px-6 py-12 text-center text-slate-500">
                     No pending approvals at this time.
                   </td>
                 </tr>
               ) : (
-                pendingApprovals.map(approval => {
-                  const expense = expenses.find(e => e.id === approval.expenseId);
-                  if (!expense) return null;
-
-                  return (
-                    <tr key={approval.id} className="hover:bg-slate-50 transition-colors">
-                      <td className="px-6 py-4 text-sm font-medium text-slate-900">
-                        {expense.userName}
-                      </td>
-                      <td className="px-6 py-4 text-sm text-slate-600">
-                        {new Date(expense.date).toLocaleDateString()}
-                      </td>
-                      <td className="px-6 py-4">
-                        <div>
-                          <p className="text-sm font-medium text-slate-900">{expense.description}</p>
-                          {expense.merchant && (
-                            <p className="text-xs text-slate-500">{expense.merchant}</p>
-                          )}
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 text-sm text-slate-600">{expense.category}</td>
-                      <td className="px-6 py-4 text-sm font-semibold text-slate-900">
-                        {expense.currency} {expense.amount.toFixed(2)}
-                      </td>
-                      <td className="px-6 py-4">
-                        {expense.receiptUrl ? (
-                          <button
-                            onClick={() => window.open(expense.receiptUrl, '_blank')}
-                            className="text-teal-600 hover:text-teal-700 text-sm font-medium flex items-center gap-1"
-                          >
-                            <Eye size={16} />
-                            View
-                          </button>
-                        ) : (
-                          <span className="text-slate-400 text-sm">No receipt</span>
-                        )}
-                      </td>
-                      <td className="px-6 py-4">
-                        <div className="flex gap-2">
-                          <Button
-                            size="sm"
-                            onClick={() => openApprovalModal(approval)}
-                            variant="secondary"
-                          >
-                            Review
-                          </Button>
-                        </div>
-                      </td>
-                    </tr>
-                  );
-                })
+                approvals.map(approval => (
+                  <tr key={approval.approval_id} className="hover:bg-slate-50 transition-colors">
+                    <td className="px-6 py-4 text-sm font-medium text-slate-900">
+                      {approval.first_name} {approval.last_name}
+                    </td>
+                    <td className="px-6 py-4 text-sm text-slate-600">
+                      {new Date(approval.expense_date).toLocaleDateString()}
+                    </td>
+                    <td className="px-6 py-4">
+                      <div>
+                        <p className="text-sm font-medium text-slate-900">{approval.description || 'No description'}</p>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 text-sm text-slate-600">{approval.category || 'Uncategorized'}</td>
+                    <td className="px-6 py-4 text-sm font-semibold text-slate-900">
+                      {approval.currency_code} {approval.amount.toFixed(2)}
+                    </td>
+                    <td className="px-6 py-4">
+                      <span className="text-slate-400 text-sm">No receipt</span>
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="flex gap-2">
+                        <Button
+                          size="sm"
+                          onClick={() => openApprovalModal(approval)}
+                          variant="secondary"
+                        >
+                          Review
+                        </Button>
+                      </div>
+                    </td>
+                  </tr>
+                ))
               )}
             </tbody>
           </table>
@@ -177,62 +168,41 @@ export function ManagerApprovals() {
                 <div>
                   <p className="text-sm text-slate-600 font-medium">Employee</p>
                   <p className="text-lg font-semibold text-slate-900">
-                    {selectedApproval.expense.userName}
+                    {selectedApproval.first_name} {selectedApproval.last_name}
                   </p>
                 </div>
 
                 <div>
                   <p className="text-sm text-slate-600 font-medium">Description</p>
-                  <p className="text-slate-900">{selectedApproval.expense.description}</p>
-                </div>
-
-                <div>
-                  <p className="text-sm text-slate-600 font-medium">Merchant</p>
-                  <p className="text-slate-900">
-                    {selectedApproval.expense.merchant || 'Not specified'}
-                  </p>
+                  <p className="text-slate-900">{selectedApproval.description || 'No description'}</p>
                 </div>
 
                 <div>
                   <p className="text-sm text-slate-600 font-medium">Date</p>
                   <p className="text-slate-900">
-                    {new Date(selectedApproval.expense.date).toLocaleDateString()}
+                    {new Date(selectedApproval.expense_date).toLocaleDateString()}
                   </p>
                 </div>
 
                 <div>
                   <p className="text-sm text-slate-600 font-medium">Category</p>
-                  <p className="text-slate-900">{selectedApproval.expense.category}</p>
+                  <p className="text-slate-900">{selectedApproval.category || 'Uncategorized'}</p>
                 </div>
 
                 <div>
                   <p className="text-sm text-slate-600 font-medium">Amount</p>
                   <p className="text-2xl font-bold text-slate-900">
-                    {selectedApproval.expense.currency} {selectedApproval.expense.amount.toFixed(2)}
+                    {selectedApproval.currency_code} {selectedApproval.amount.toFixed(2)}
                   </p>
                 </div>
-
-                {selectedApproval.expense.notes && (
-                  <div>
-                    <p className="text-sm text-slate-600 font-medium mb-1">Notes</p>
-                    <p className="text-slate-700 bg-slate-50 p-3 rounded-lg">
-                      {selectedApproval.expense.notes}
-                    </p>
-                  </div>
-                )}
               </div>
 
-              {selectedApproval.expense.receiptUrl && (
-                <div>
-                  <p className="text-sm text-slate-600 font-medium mb-3">Receipt</p>
-                  <img
-                    src={selectedApproval.expense.receiptUrl}
-                    alt="Receipt"
-                    className="w-full rounded-lg border border-slate-200 cursor-pointer hover:opacity-90 transition-opacity"
-                    onClick={() => window.open(selectedApproval.expense.receiptUrl, '_blank')}
-                  />
+              <div>
+                <p className="text-sm text-slate-600 font-medium mb-3">Receipt</p>
+                <div className="w-full h-48 bg-slate-100 rounded-lg border border-slate-200 flex items-center justify-center">
+                  <span className="text-slate-500">No receipt available</span>
                 </div>
-              )}
+              </div>
             </div>
 
             <div className="pt-4 border-t border-slate-200">
@@ -258,14 +228,14 @@ export function ManagerApprovals() {
               </Button>
               <Button
                 variant="destructive"
-                onClick={() => handleDecision(selectedApproval.approval.id, 'rejected')}
+                onClick={() => handleReject(selectedApproval.approval_id)}
                 className="flex-1 flex items-center justify-center gap-2"
               >
                 <XCircle size={20} />
                 Reject
               </Button>
               <Button
-                onClick={() => handleDecision(selectedApproval.approval.id, 'approved')}
+                onClick={() => handleApprove(selectedApproval.approval_id)}
                 className="flex-1 flex items-center justify-center gap-2"
               >
                 <CheckCircle size={20} />

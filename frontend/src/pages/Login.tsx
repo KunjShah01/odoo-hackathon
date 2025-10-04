@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { Input, Select } from '../components/ui/Input';
+import { Input } from '../components/ui/Input';
 import { Button } from '../components/ui/Button';
 import { Receipt } from 'lucide-react';
 
@@ -8,9 +8,9 @@ export function Login() {
   const [isSignup, setIsSignup] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [fullName, setFullName] = useState('');
-  const [role, setRole] = useState('employee');
-  const [country, setCountry] = useState('US');
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [companyId, setCompanyId] = useState('');
   const [error, setError] = useState('');
   const { login, signup } = useAuth();
 
@@ -20,12 +20,16 @@ export function Login() {
 
     try {
       if (isSignup) {
-        await signup(email, password, fullName, role, country);
+        const finalCompanyId = companyId || '11111111-1111-1111-1111-111111111111';
+        await signup(email, password, firstName, lastName, finalCompanyId);
       } else {
-        await login(email, password, role);
+        await login(email, password);
       }
+      // Successfully authenticated - user state will be updated in AuthContext
+      console.log('Authentication successful');
     } catch (err) {
-      setError('Invalid credentials. Try: employee@company.com, manager@company.com, or admin@company.com');
+      console.error('Authentication error:', err);
+      setError(err instanceof Error ? err.message : 'Authentication failed');
     }
   };
 
@@ -74,14 +78,31 @@ export function Login() {
 
           <form onSubmit={handleSubmit} className="space-y-4">
             {isSignup && (
-              <Input
-                label="Full Name"
-                type="text"
-                value={fullName}
-                onChange={(e) => setFullName(e.target.value)}
-                required
-                placeholder="John Doe"
-              />
+              <>
+                <Input
+                  label="First Name"
+                  type="text"
+                  value={firstName}
+                  onChange={(e) => setFirstName(e.target.value)}
+                  required
+                  placeholder="John"
+                />
+                <Input
+                  label="Last Name"
+                  type="text"
+                  value={lastName}
+                  onChange={(e) => setLastName(e.target.value)}
+                  required
+                  placeholder="Doe"
+                />
+                <Input
+                  label="Company ID"
+                  type="text"
+                  value={companyId}
+                  onChange={(e) => setCompanyId(e.target.value)}
+                  placeholder="Leave empty for default company"
+                />
+              </>
             )}
 
             <Input
@@ -101,33 +122,6 @@ export function Login() {
               required
               placeholder="••••••••"
             />
-
-            <Select
-              label="Role"
-              value={role}
-              onChange={(e) => setRole(e.target.value)}
-              required
-            >
-              <option value="employee">Employee</option>
-              <option value="manager">Manager</option>
-              <option value="admin">Admin</option>
-            </Select>
-
-            {isSignup && (
-              <Select
-                label="Country"
-                value={country}
-                onChange={(e) => setCountry(e.target.value)}
-                required
-              >
-                <option value="US">🇺🇸 United States (USD)</option>
-                <option value="GB">🇬🇧 United Kingdom (GBP)</option>
-                <option value="EU">🇪🇺 European Union (EUR)</option>
-                <option value="JP">🇯🇵 Japan (JPY)</option>
-                <option value="IN">🇮🇳 India (INR)</option>
-                <option value="CA">🇨🇦 Canada (CAD)</option>
-              </Select>
-            )}
 
             {error && (
               <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
@@ -154,11 +148,13 @@ export function Login() {
 
           {!isSignup && (
             <div className="mt-8 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-              <p className="text-sm text-blue-900 font-medium mb-2">Demo Accounts:</p>
+              <p className="text-sm text-blue-900 font-medium mb-2">Demo Instructions:</p>
               <div className="text-sm text-blue-700 space-y-1">
-                <div>Employee: employee@company.com</div>
-                <div>Manager: manager@company.com</div>
-                <div>Admin: admin@company.com</div>
+                <div>1. First create an account using signup</div>
+                <div>2. Use any valid email and password</div>
+                <div>3. Company ID is optional (leave empty for default)</div>
+                <div>4. Then login with your created account</div>
+                <div>Or use existing demo account: sarah.admin@techcorp.com / password</div>
               </div>
             </div>
           )}

@@ -1,167 +1,255 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Expense, Approval, ApprovalFlow } from '../types';
-
-const STORAGE_KEY = 'expenses';
-const APPROVALS_KEY = 'approvals';
-const FLOWS_KEY = 'approval_flows';
-
-const INITIAL_EXPENSES: Expense[] = [
-  {
-    id: '1',
-    userId: '1',
-    userName: 'John Employee',
-    date: '2025-10-01',
-    description: 'Client Dinner',
-    category: 'Meals',
-    merchant: 'The Steakhouse',
-    amount: 156.50,
-    currency: 'USD',
-    receiptUrl: 'https://images.pexels.com/photos/262978/pexels-photo-262978.jpeg',
-    status: 'pending',
-    createdAt: '2025-10-01T10:00:00Z',
-    updatedAt: '2025-10-01T10:00:00Z'
-  },
-  {
-    id: '2',
-    userId: '1',
-    userName: 'John Employee',
-    date: '2025-09-28',
-    description: 'Conference Flight',
-    category: 'Travel',
-    merchant: 'Delta Airlines',
-    amount: 450.00,
-    currency: 'USD',
-    receiptUrl: 'https://images.pexels.com/photos/358220/pexels-photo-358220.jpeg',
-    status: 'approved',
-    createdAt: '2025-09-28T08:00:00Z',
-    updatedAt: '2025-09-28T15:00:00Z'
-  }
-];
-
-const INITIAL_APPROVALS: Approval[] = [
-  {
-    id: '1',
-    expenseId: '1',
-    approverId: '2',
-    approverName: 'Sarah Manager',
-    status: 'pending',
-    stepNumber: 1,
-    createdAt: '2025-10-01T10:00:00Z'
-  }
-];
-
-const INITIAL_FLOWS: ApprovalFlow[] = [
-  {
-    id: '1',
-    name: 'Standard Approval Flow',
-    steps: [
-      {
-        stepNumber: 1,
-        name: 'Manager Review',
-        approverIds: ['2'],
-        approvalType: 'specific'
-      },
-      {
-        stepNumber: 2,
-        name: 'Finance Approval',
-        approverIds: ['3'],
-        approvalType: 'specific'
-      }
-    ],
-    isActive: true,
-    createdBy: '3',
-    createdAt: '2025-09-01T00:00:00Z'
-  }
-];
+import { apiService, ApiError } from '../services/api';
 
 export function useExpenseStore() {
-  const [expenses, setExpenses] = useState<Expense[]>([]);
-  const [approvals, setApprovals] = useState<Approval[]>([]);
+  const [expenses, setExpenses] = useState<Expense[]>([
+    {
+      id: '1',
+      user_id: '1',
+      description: 'Business Lunch',
+      amount: 45.50,
+      currency_code: 'USD',
+      category: 'Meals',
+      expense_date: '2024-01-15',
+      status: 'approved',
+      created_at: '2024-01-15T12:00:00Z',
+      updated_at: '2024-01-15T12:00:00Z'
+    },
+    {
+      id: '2',
+      user_id: '1',
+      description: 'Taxi to Airport',
+      amount: 25.00,
+      currency_code: 'USD',
+      category: 'Travel',
+      expense_date: '2024-01-16',
+      status: 'pending',
+      created_at: '2024-01-16T08:00:00Z',
+      updated_at: '2024-01-16T08:00:00Z'
+    }
+  ]);
+  const [approvals, setApprovals] = useState<Approval[]>([
+    {
+      approval_id: '1',
+      expense_id: '2',
+      approver_id: '2',
+      status: 'pending',
+      comments: '',
+      first_name: 'Sarah',
+      last_name: 'Manager',
+      description: 'Taxi to Airport',
+      amount: 25.00,
+      currency_code: 'USD',
+      category: 'Travel',
+      expense_date: '2024-01-16'
+    }
+  ]);
   const [flows, setFlows] = useState<ApprovalFlow[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    const storedExpenses = localStorage.getItem(STORAGE_KEY);
-    const storedApprovals = localStorage.getItem(APPROVALS_KEY);
-    const storedFlows = localStorage.getItem(FLOWS_KEY);
-
-    setExpenses(storedExpenses ? JSON.parse(storedExpenses) : INITIAL_EXPENSES);
-    setApprovals(storedApprovals ? JSON.parse(storedApprovals) : INITIAL_APPROVALS);
-    setFlows(storedFlows ? JSON.parse(storedFlows) : INITIAL_FLOWS);
-  }, []);
-
-  const saveExpenses = (newExpenses: Expense[]) => {
-    setExpenses(newExpenses);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(newExpenses));
+  const fetchExpenses = async (page = 1, limit = 10, status?: string) => {
+    setLoading(true);
+    setError(null);
+    try {
+      // Mock data - in real app this would call apiService.getExpenses
+      let filteredExpenses = expenses;
+      if (status) {
+        filteredExpenses = expenses.filter(e => e.status === status);
+      }
+      return {
+        expenses: filteredExpenses.slice((page - 1) * limit, page * limit),
+        pagination: {
+          currentPage: page,
+          totalPages: Math.ceil(filteredExpenses.length / limit),
+          totalExpenses: filteredExpenses.length,
+          hasMore: page * limit < filteredExpenses.length
+        }
+      };
+    } catch (err) {
+      const errorMessage = err instanceof ApiError ? err.message : 'Failed to fetch expenses';
+      setError(errorMessage);
+      throw new Error(errorMessage);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const saveApprovals = (newApprovals: Approval[]) => {
-    setApprovals(newApprovals);
-    localStorage.setItem(APPROVALS_KEY, JSON.stringify(newApprovals));
+  const fetchExpense = async (id: string) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await apiService.getExpense(id);
+      return response.expense;
+    } catch (err) {
+      const errorMessage = err instanceof ApiError ? err.message : 'Failed to fetch expense';
+      setError(errorMessage);
+      throw new Error(errorMessage);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const createExpense = async (data: {
+    description: string;
+    amount: number;
+    currencyCode: string;
+    category: string;
+    expenseDate: string;
+  }) => {
+    setLoading(true);
+    setError(null);
+    try {
+      // Mock create expense
+      const newExpense: Expense = {
+        id: Date.now().toString(),
+        user_id: '1', // Mock user id
+        description: data.description,
+        amount: data.amount,
+        currency_code: data.currencyCode,
+        category: data.category,
+        expense_date: data.expenseDate,
+        status: 'draft',
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      };
+      setExpenses(prev => [...prev, newExpense]);
+      return newExpense;
+    } catch (err) {
+      const errorMessage = err instanceof ApiError ? err.message : 'Failed to create expense';
+      setError(errorMessage);
+      throw new Error(errorMessage);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const updateExpense = async (id: string, data: Partial<{
+    description?: string;
+    amount?: number;
+    currencyCode?: string;
+    category?: string;
+    expenseDate?: string;
+  }>) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await apiService.updateExpense(id, data);
+      // Refresh expenses list
+      await fetchExpenses();
+      return response.expense;
+    } catch (err) {
+      const errorMessage = err instanceof ApiError ? err.message : 'Failed to update expense';
+      setError(errorMessage);
+      throw new Error(errorMessage);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const deleteExpense = async (id: string) => {
+    setLoading(true);
+    setError(null);
+    try {
+      await apiService.deleteExpense(id);
+      // Refresh expenses list
+      await fetchExpenses();
+    } catch (err) {
+      const errorMessage = err instanceof ApiError ? err.message : 'Failed to delete expense';
+      setError(errorMessage);
+      throw new Error(errorMessage);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const submitExpenseForApproval = async (id: string) => {
+    setLoading(true);
+    setError(null);
+    try {
+      // Mock submit for approval
+      setExpenses(prev => prev.map(e => 
+        e.id === id ? { ...e, status: 'pending' as Expense['status'] } : e
+      ));
+    } catch (err) {
+      const errorMessage = err instanceof ApiError ? err.message : 'Failed to submit expense';
+      setError(errorMessage);
+      throw new Error(errorMessage);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchPendingApprovals = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await apiService.getPendingApprovals();
+      setApprovals(response.approvals);
+      return response;
+    } catch (err) {
+      const errorMessage = err instanceof ApiError ? err.message : 'Failed to fetch approvals';
+      setError(errorMessage);
+      throw new Error(errorMessage);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const approveExpense = async (approvalId: string, comments?: string) => {
+    setLoading(true);
+    setError(null);
+    try {
+      await apiService.approveExpense(approvalId, comments);
+      // Refresh approvals and expenses
+      await Promise.all([fetchPendingApprovals(), fetchExpenses()]);
+    } catch (err) {
+      const errorMessage = err instanceof ApiError ? err.message : 'Failed to approve expense';
+      setError(errorMessage);
+      throw new Error(errorMessage);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const rejectExpense = async (approvalId: string, comments: string) => {
+    setLoading(true);
+    setError(null);
+    try {
+      await apiService.rejectExpense(approvalId, comments);
+      // Refresh approvals and expenses
+      await Promise.all([fetchPendingApprovals(), fetchExpenses()]);
+    } catch (err) {
+      const errorMessage = err instanceof ApiError ? err.message : 'Failed to reject expense';
+      setError(errorMessage);
+      throw new Error(errorMessage);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const saveFlows = (newFlows: ApprovalFlow[]) => {
     setFlows(newFlows);
-    localStorage.setItem(FLOWS_KEY, JSON.stringify(newFlows));
   };
 
-  const addExpense = (expense: Omit<Expense, 'id' | 'createdAt' | 'updatedAt'>) => {
-    const newExpense: Expense = {
-      ...expense,
-      id: Date.now().toString(),
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
-    };
-    saveExpenses([...expenses, newExpense]);
-    return newExpense;
-  };
-
-  const updateExpense = (id: string, updates: Partial<Expense>) => {
-    const updated = expenses.map(e =>
-      e.id === id ? { ...e, ...updates, updatedAt: new Date().toISOString() } : e
-    );
-    saveExpenses(updated);
-  };
-
-  const submitExpenseForApproval = (expenseId: string, approverId: string, approverName: string) => {
-    updateExpense(expenseId, { status: 'pending' });
-
-    const newApproval: Approval = {
-      id: Date.now().toString(),
-      expenseId,
-      approverId,
-      approverName,
-      status: 'pending',
-      stepNumber: 1,
-      createdAt: new Date().toISOString()
-    };
-    saveApprovals([...approvals, newApproval]);
-  };
-
-  const updateApproval = (id: string, status: 'approved' | 'rejected', comments?: string) => {
-    const approval = approvals.find(a => a.id === id);
-    if (!approval) return;
-
-    const updated = approvals.map(a =>
-      a.id === id
-        ? { ...a, status, comments, decidedAt: new Date().toISOString() }
-        : a
-    );
-    saveApprovals(updated);
-
-    const expense = expenses.find(e => e.id === approval.expenseId);
-    if (expense) {
-      updateExpense(expense.id, { status });
-    }
-  };
+  // Initialize with mock data - no need for useEffect
 
   return {
     expenses,
     approvals,
     flows,
-    addExpense,
+    loading,
+    error,
+    fetchExpenses,
+    fetchExpense,
+    createExpense,
     updateExpense,
+    deleteExpense,
     submitExpenseForApproval,
-    updateApproval,
-    saveFlows
+    fetchPendingApprovals,
+    approveExpense,
+    rejectExpense,
+    saveFlows,
   };
 }

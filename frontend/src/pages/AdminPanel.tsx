@@ -20,15 +20,15 @@ export function AdminPanel() {
   const [isFlowModalOpen, setIsFlowModalOpen] = useState(false);
   const [editingFlow, setEditingFlow] = useState<ApprovalFlow | null>(null);
 
-  const [flowForm, setFlowForm] = useState({
+  const [flowForm, setFlowForm] = useState<{ name: string; steps: ApprovalStep[] }>({
     name: '',
     steps: [
       {
         stepNumber: 1,
         name: '',
         approverIds: [] as string[],
-        approvalType: 'specific' as const
-      }
+        approvalType: 'specific'
+      } as ApprovalStep
     ]
   });
 
@@ -309,8 +309,8 @@ export function AdminPanel() {
                         <Select
                           label="Approval Type"
                           value={step.approvalType}
-                          onChange={(e) => updateStep(step.stepNumber, {
-                            approvalType: e.target.value as any
+                          onChange={(e: React.ChangeEvent<HTMLSelectElement>) => updateStep(step.stepNumber, {
+                            approvalType: e.target.value as ApprovalStep['approvalType']
                           })}
                         >
                           <option value="specific">Specific Approver</option>

@@ -1,4 +1,4 @@
-export type UserRole = 'employee' | 'manager' | 'admin';
+export type UserRole = 'employee' | 'manager' | 'admin' | 'cfo';
 
 export type ExpenseStatus = 'draft' | 'pending' | 'approved' | 'rejected';
 
@@ -7,27 +7,23 @@ export type ApprovalStatus = 'pending' | 'approved' | 'rejected';
 export interface User {
   id: string;
   email: string;
-  fullName: string;
+  firstName: string;
+  lastName: string;
   role: UserRole;
-  country: string;
-  defaultCurrency: string;
+  avatar?: string;
 }
 
 export interface Expense {
   id: string;
-  userId: string;
-  userName: string;
-  date: string;
-  description: string;
-  category: string;
-  merchant?: string;
+  user_id: string;
+  description?: string;
   amount: number;
-  currency: string;
-  receiptUrl?: string;
-  notes?: string;
+  currency_code: string;
+  category?: string;
+  expense_date: string;
   status: ExpenseStatus;
-  createdAt: string;
-  updatedAt: string;
+  created_at: string;
+  updated_at: string;
 }
 
 export interface ApprovalStep {
@@ -48,13 +44,16 @@ export interface ApprovalFlow {
 }
 
 export interface Approval {
-  id: string;
-  expenseId: string;
-  approverId: string;
-  approverName: string;
+  approval_id: string;
+  expense_id: string;
+  approver_id: string;
   status: ApprovalStatus;
   comments?: string;
-  stepNumber: number;
-  decidedAt?: string;
-  createdAt: string;
+  first_name: string;
+  last_name: string;
+  description?: string;
+  amount: number;
+  currency_code: string;
+  category?: string;
+  expense_date: string;
 }

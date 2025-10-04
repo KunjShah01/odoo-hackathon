@@ -13,7 +13,7 @@ interface AddExpenseModalProps {
 
 export function AddExpenseModal({ isOpen, onClose }: AddExpenseModalProps) {
   const { user } = useAuth();
-  const { addExpense, submitExpenseForApproval } = useExpenseStore();
+    const { createExpense, submitExpenseForApproval } = useExpenseStore();
   const [isOCRProcessing, setIsOCRProcessing] = useState(false);
 
   const [formData, setFormData] = useState({
@@ -22,7 +22,7 @@ export function AddExpenseModal({ isOpen, onClose }: AddExpenseModalProps) {
     category: 'Meals',
     merchant: '',
     amount: '',
-    currency: user?.defaultCurrency || 'USD',
+    currency: 'USD',
     notes: '',
     receiptUrl: ''
   });
@@ -52,39 +52,37 @@ export function AddExpenseModal({ isOpen, onClose }: AddExpenseModalProps) {
     setIsOCRProcessing(false);
   };
 
-  const handleSubmit = (isDraft: boolean) => {
+  const handleSubmit = async (isDraft: boolean) => {
     if (!user) return;
 
-    const expense = addExpense({
-      userId: user.id,
-      userName: user.fullName,
-      date: formData.date,
-      description: formData.description,
-      category: formData.category,
-      merchant: formData.merchant || undefined,
-      amount: parseFloat(formData.amount),
-      currency: formData.currency,
-      notes: formData.notes || undefined,
-      receiptUrl: formData.receiptUrl || undefined,
-      status: isDraft ? 'draft' : 'pending'
-    });
+    try {
+      const expense = await createExpense({
+        description: formData.description,
+        amount: parseFloat(formData.amount),
+        currencyCode: formData.currency,
+        category: formData.category,
+        expenseDate: formData.date
+      });
 
-    if (!isDraft) {
-      submitExpenseForApproval(expense.id, '2', 'Sarah Manager');
+      if (!isDraft) {
+        await submitExpenseForApproval(expense.id);
+      }
+
+      setFormData({
+        date: new Date().toISOString().split('T')[0],
+        description: '',
+        category: 'Meals',
+        merchant: '',
+        amount: '',
+        currency: 'USD',
+        notes: '',
+        receiptUrl: ''
+      });
+
+      onClose();
+    } catch (error) {
+      console.error('Failed to create expense:', error);
     }
-
-    setFormData({
-      date: new Date().toISOString().split('T')[0],
-      description: '',
-      category: 'Meals',
-      merchant: '',
-      amount: '',
-      currency: user.defaultCurrency,
-      notes: '',
-      receiptUrl: ''
-    });
-
-    onClose();
   };
 
   return (

@@ -10,6 +10,8 @@ function AppContent() {
   const { user, isLoading } = useAuth();
   const [currentView, setCurrentView] = useState('dashboard');
 
+  console.log('AppContent render - user:', user, 'isLoading:', isLoading);
+
   if (isLoading) {
     return (
       <div className="min-h-screen bg-slate-50 flex items-center justify-center">

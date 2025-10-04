@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Card, CardHeader, CardBody } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
 import { StatusTag } from '../components/ui/StatusTag';
@@ -15,10 +15,10 @@ export function EmployeeDashboard() {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [selectedExpense, setSelectedExpense] = useState<Expense | null>(null);
 
-  const userExpenses = expenses.filter(e => e.userId === user?.id);
+  const userExpenses = expenses.filter(e => e.user_id === user?.id);
 
   const thisMonthExpenses = userExpenses.filter(e => {
-    const expenseDate = new Date(e.date);
+    const expenseDate = new Date(e.expense_date);
     const now = new Date();
     return expenseDate.getMonth() === now.getMonth() && expenseDate.getFullYear() === now.getFullYear();
   });
@@ -123,19 +123,17 @@ export function EmployeeDashboard() {
                 userExpenses.map(expense => (
                   <tr key={expense.id} className="hover:bg-slate-50 transition-colors">
                     <td className="px-6 py-4 text-sm text-slate-900">
-                      {new Date(expense.date).toLocaleDateString()}
+                      {new Date(expense.expense_date ?? expense.created_at ?? Date.now()).toLocaleDateString()}
                     </td>
                     <td className="px-6 py-4">
                       <div>
                         <p className="text-sm font-medium text-slate-900">{expense.description}</p>
-                        {expense.merchant && (
-                          <p className="text-xs text-slate-500">{expense.merchant}</p>
-                        )}
+                        <p className="text-xs text-slate-500">{new Date(expense.created_at).toLocaleString()}</p>
                       </div>
                     </td>
                     <td className="px-6 py-4 text-sm text-slate-600">{expense.category}</td>
                     <td className="px-6 py-4 text-sm font-semibold text-slate-900">
-                      {expense.currency} {expense.amount.toFixed(2)}
+                      {expense.currency_code} {expense.amount.toFixed(2)}
                     </td>
                     <td className="px-6 py-4">
                       <StatusTag status={expense.status} />

@@ -8,7 +8,7 @@ const signupSchema = Joi.object({
   password: Joi.string().min(6).required(),
   firstName: Joi.string().required(),
   lastName: Joi.string().required(),
-  companyId: Joi.string().uuid().required()
+  companyId: Joi.string().uuid().optional()
 });
 
 const loginSchema = Joi.object({
@@ -24,6 +24,8 @@ const signup = async (req, res) => {
     }
 
     const { email, password, firstName, lastName, companyId } = value;
+    const defaultCompanyId = '11111111-1111-1111-1111-111111111111';
+    const finalCompanyId = companyId || defaultCompanyId;
 
     // Check if user already exists
     const existingUser = await db.query('SELECT id FROM users WHERE email = $1', [email]);
@@ -38,7 +40,7 @@ const signup = async (req, res) => {
     // Create user
     const result = await db.query(
       'INSERT INTO users (email, password_hash, first_name, last_name, full_name, company_id, role) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id, email, first_name, last_name, role',
-      [email, hashedPassword, firstName, lastName, `${firstName} ${lastName}`, companyId, 'employee']
+      [email, hashedPassword, firstName, lastName, `${firstName} ${lastName}`, finalCompanyId, 'employee']
     );
 
     const user = result.rows[0];
@@ -75,9 +77,11 @@ const login = async (req, res) => {
     }
 
     const { email, password } = value;
+    console.log('Login attempt:', { email, passwordLength: password.length });
 
     // Find user
     const result = await db.query('SELECT * FROM users WHERE email = $1', [email]);
+    console.log('User query result:', { found: result.rows.length > 0, userId: result.rows.length > 0 ? result.rows[0].id : null });
     if (result.rows.length === 0) {
       return res.status(401).json({ error: 'Invalid credentials' });
     }
@@ -86,6 +90,7 @@ const login = async (req, res) => {
 
     // Check password
     const isValidPassword = await bcrypt.compare(password, user.password_hash);
+    console.log('Password check:', { isValid: isValidPassword });
     if (!isValidPassword) {
       return res.status(401).json({ error: 'Invalid credentials' });
     }
