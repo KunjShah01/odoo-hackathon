@@ -11,7 +11,12 @@
     "lint": "eslint src/**/*.js",
     "lint:fix": "eslint src/**/*.js --fix"
   },
-  "keywords": ["expense", "management", "api", "odoo"],
+  "keywords": [
+    "expense",
+    "management",
+    "api",
+    "odoo"
+  ],
   "author": "",
   "license": "ISC",
   "type": "commonjs",
@@ -20,14 +25,15 @@
     "pg": "^8.11.3",
     "bcryptjs": "^2.4.3",
     "jsonwebtoken": "^9.0.2",
-    "multer": "^1.4.5-lts.1",
+    "multer": "^2.0.2",
     "tesseract.js": "^5.0.4",
     "axios": "^1.6.2",
     "joi": "^17.11.0",
     "cors": "^2.8.5",
     "helmet": "^7.1.0",
     "morgan": "^1.10.0",
-    "dotenv": "^16.3.1"
+    "dotenv": "^16.3.1",
+    "express-rate-limit": "^8.1.0"
   },
   "devDependencies": {
     "nodemon": "^3.0.2",
