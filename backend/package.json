@@ -11,7 +11,12 @@
     "lint": "eslint src/**/*.js",
     "lint:fix": "eslint src/**/*.js --fix"
   },
-  "keywords": ["expense", "management", "api", "odoo"],
+  "keywords": [
+    "expense",
+    "management",
+    "api",
+    "odoo"
+  ],
   "author": "",
   "license": "ISC",
   "type": "commonjs",
@@ -27,7 +32,8 @@
     "cors": "^2.8.5",
     "helmet": "^7.1.0",
     "morgan": "^1.10.0",
-    "dotenv": "^16.3.1"
+    "dotenv": "^16.3.1",
+    "express-rate-limit": "^8.1.0"
   },
   "devDependencies": {
     "nodemon": "^3.0.2",
