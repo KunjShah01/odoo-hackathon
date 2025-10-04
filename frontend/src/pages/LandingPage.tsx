@@ -254,8 +254,198 @@ export function LandingPage() {
         </div>
       </section>
 
+      {/* OCR Demo Section */}
+      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-white">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-16">
+            <div className="inline-flex items-center gap-2 bg-teal-100 text-teal-800 px-4 py-2 rounded-full mb-4">
+              <Zap size={18} />
+              <span className="text-sm font-semibold">AI-Powered OCR</span>
+            </div>
+            <h2 className="text-4xl sm:text-5xl font-bold text-slate-900 mb-4">
+              Scan Receipts in Seconds
+            </h2>
+            <p className="text-xl text-slate-600 max-w-3xl mx-auto">
+              Our advanced OCR technology powered by Tesseract.js extracts data from receipts with 99%+ accuracy
+            </p>
+          </div>
+
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            {/* Left Side - Visual Demo */}
+            <div className="relative">
+              <div className="bg-gradient-to-br from-teal-50 to-indigo-50 rounded-3xl p-8 border-2 border-teal-200">
+                {/* Simulated Receipt */}
+                <div className="bg-white rounded-2xl shadow-2xl p-8 mb-6 transform hover:scale-105 transition-all duration-300">
+                  <div className="text-center mb-6 pb-4 border-b border-slate-200">
+                    <h3 className="text-2xl font-bold text-slate-900">Coffee Shop ☕</h3>
+                    <p className="text-sm text-slate-600">123 Main Street, Downtown</p>
+                  </div>
+                  
+                  <div className="space-y-3 mb-6">
+                    <div className="flex justify-between text-slate-700">
+                      <span>Cappuccino (Large)</span>
+                      <span>$5.50</span>
+                    </div>
+                    <div className="flex justify-between text-slate-700">
+                      <span>Croissant</span>
+                      <span>$3.75</span>
+                    </div>
+                    <div className="flex justify-between text-slate-700">
+                      <span>Tax (8%)</span>
+                      <span>$0.74</span>
+                    </div>
+                  </div>
+                  
+                  <div className="border-t-2 border-slate-900 pt-3 mb-4">
+                    <div className="flex justify-between text-xl font-bold text-slate-900">
+                      <span>TOTAL</span>
+                      <span>$9.99</span>
+                    </div>
+                  </div>
+                  
+                  <div className="text-center text-sm text-slate-500">
+                    <p>Date: 10/04/2025 14:32</p>
+                    <p>Transaction #: 78901234</p>
+                  </div>
+                </div>
+
+                {/* Scanning Animation Indicator */}
+                <div className="absolute top-12 left-1/2 transform -translate-x-1/2 bg-teal-500 text-white px-6 py-3 rounded-full shadow-lg animate-pulse">
+                  <div className="flex items-center gap-2">
+                    <Zap size={20} />
+                    <span className="font-semibold">Scanning...</span>
+                  </div>
+                </div>
+
+                {/* Arrow */}
+                <div className="text-center mb-4">
+                  <ArrowRight className="inline-block text-teal-500 transform rotate-90" size={48} />
+                </div>
+
+                {/* Extracted Data */}
+                <div className="bg-white rounded-2xl shadow-2xl p-6 border-2 border-teal-500">
+                  <div className="flex items-center gap-2 mb-4">
+                    <CheckCircle2 className="text-teal-500" size={24} />
+                    <h4 className="font-bold text-slate-900 text-lg">Data Extracted!</h4>
+                  </div>
+                  
+                  <div className="space-y-3 text-sm">
+                    <div className="flex justify-between items-center bg-teal-50 rounded-lg p-3">
+                      <span className="text-slate-600 font-medium">Vendor:</span>
+                      <span className="font-bold text-slate-900">Coffee Shop</span>
+                    </div>
+                    <div className="flex justify-between items-center bg-teal-50 rounded-lg p-3">
+                      <span className="text-slate-600 font-medium">Amount:</span>
+                      <span className="font-bold text-slate-900">$9.99</span>
+                    </div>
+                    <div className="flex justify-between items-center bg-teal-50 rounded-lg p-3">
+                      <span className="text-slate-600 font-medium">Date:</span>
+                      <span className="font-bold text-slate-900">Oct 4, 2025</span>
+                    </div>
+                    <div className="flex justify-between items-center bg-teal-50 rounded-lg p-3">
+                      <span className="text-slate-600 font-medium">Category:</span>
+                      <span className="font-bold text-slate-900">Food & Beverage</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Right Side - Features & Benefits */}
+            <div>
+              <div className="space-y-8">
+                {[
+                  {
+                    icon: <Zap className="text-teal-600" size={32} />,
+                    title: 'Lightning Fast Extraction',
+                    description: 'Extract receipt data in under 3 seconds with our optimized Tesseract.js OCR engine',
+                    stats: '99%+ accuracy'
+                  },
+                  {
+                    icon: <Globe className="text-indigo-600" size={32} />,
+                    title: 'Multi-Language Support',
+                    description: 'Process receipts in 100+ languages including English, Spanish, French, German, Chinese, and more',
+                    stats: '100+ languages'
+                  },
+                  {
+                    icon: <FileText className="text-purple-600" size={32} />,
+                    title: 'Smart Data Recognition',
+                    description: 'Automatically identifies vendors, amounts, dates, categories, tax amounts, and transaction details',
+                    stats: 'All formats'
+                  },
+                  {
+                    icon: <Shield className="text-pink-600" size={32} />,
+                    title: 'Privacy First',
+                    description: 'OCR processing happens securely on our servers. Images are automatically deleted after extraction',
+                    stats: 'Zero retention'
+                  }
+                ].map((feature, index) => (
+                  <div key={index} className="flex gap-6 group">
+                    <div className="flex-shrink-0">
+                      <div className="w-16 h-16 bg-gradient-to-br from-slate-50 to-white border-2 border-slate-200 rounded-2xl flex items-center justify-center group-hover:scale-110 group-hover:border-teal-300 transition-all duration-300">
+                        {feature.icon}
+                      </div>
+                    </div>
+                    <div className="flex-1">
+                      <div className="flex items-center gap-3 mb-2">
+                        <h3 className="text-xl font-bold text-slate-900">{feature.title}</h3>
+                        <span className="text-xs font-bold text-teal-600 bg-teal-100 px-3 py-1 rounded-full">
+                          {feature.stats}
+                        </span>
+                      </div>
+                      <p className="text-slate-600 leading-relaxed">{feature.description}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* API Integration Info */}
+              <div className="mt-12 bg-gradient-to-br from-slate-900 to-slate-800 rounded-2xl p-8 text-white">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-12 h-12 bg-teal-500 rounded-xl flex items-center justify-center">
+                    <Sparkles size={24} />
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-lg">API Integration Available</h4>
+                    <p className="text-sm text-slate-300">Integrate OCR into your workflow</p>
+                  </div>
+                </div>
+                <div className="bg-slate-950 rounded-xl p-4 font-mono text-sm overflow-x-auto">
+                  <div className="text-slate-400">// POST /api/ocr/extract</div>
+                  <div className="text-teal-400">const formData = new FormData();</div>
+                  <div className="text-teal-400">formData.append('receipt', file);</div>
+                  <div className="text-white">fetch('/api/ocr/extract', {'{'}</div>
+                  <div className="text-white ml-4">method: 'POST',</div>
+                  <div className="text-white ml-4">body: formData</div>
+                  <div className="text-white">{'}'}).then(res =&gt; res.json());</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Supported Formats */}
+          <div className="mt-16 text-center">
+            <p className="text-slate-600 mb-6 font-medium">Supported Receipt Formats:</p>
+            <div className="flex flex-wrap justify-center gap-4">
+              {['📄 PDF', '📸 JPG/JPEG', '🖼️ PNG', '📎 HEIC', '📋 Multi-page', '🌐 International'].map((format, i) => (
+                <div key={i} className="bg-white border-2 border-slate-200 rounded-xl px-6 py-3 font-semibold text-slate-700 hover:border-teal-400 hover:shadow-lg transition-all duration-300">
+                  {format}
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* CTA */}
+          <div className="mt-12 text-center">
+            <Button onClick={() => setShowAuthModal(true)} size="lg" className="shadow-2xl">
+              Try OCR Scanner Now <ArrowRight size={20} className="ml-2" />
+            </Button>
+          </div>
+        </div>
+      </section>
+
       {/* Testimonials Section */}
-      <section id="testimonials" className="py-20 px-4 sm:px-6 lg:px-8 bg-white">
+      <section id="testimonials" className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-indigo-50 to-teal-50">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <div className="inline-flex items-center gap-2 bg-purple-100 text-purple-800 px-4 py-2 rounded-full mb-4">
@@ -509,11 +699,23 @@ export function LandingPage() {
             {[
               {
                 question: 'How accurate is the OCR scanning?',
-                answer: 'Our AI-powered OCR technology achieves 99%+ accuracy across multiple receipt formats, languages, and currencies. If any data needs correction, you can easily edit it before submission.'
+                answer: 'Our AI-powered OCR technology powered by Tesseract.js achieves 99%+ accuracy across multiple receipt formats, languages, and currencies. The system automatically extracts vendor names, amounts, dates, tax information, and categorizes expenses. If any data needs correction, you can easily edit it before submission.'
+              },
+              {
+                question: 'What image formats does the OCR support?',
+                answer: 'Our OCR system supports all common image formats including JPG, JPEG, PNG, PDF, and HEIC. You can upload single or multi-page receipts. For best results, ensure the receipt is well-lit, in focus, and the text is clearly visible.'
+              },
+              {
+                question: 'Does OCR work with handwritten receipts?',
+                answer: 'While our OCR is optimized for printed text, it can handle some handwritten receipts with clear, legible writing. However, for best accuracy, we recommend using printed receipts. You can always manually edit any extracted data.'
               },
               {
                 question: 'Can I use ExpenseFlow on mobile devices?',
-                answer: 'Yes! ExpenseFlow is fully responsive and works seamlessly on all devices. You can submit expenses, approve requests, and view reports from your phone or tablet.'
+                answer: 'Yes! ExpenseFlow is fully responsive and works seamlessly on all devices. You can submit expenses, approve requests, and view reports from your phone or tablet. Simply snap a photo of your receipt and our OCR will process it instantly.'
+              },
+              {
+                question: 'How long does OCR processing take?',
+                answer: 'OCR processing is lightning fast! Most receipts are scanned and data is extracted in under 3 seconds. The system automatically identifies key information and populates your expense form, saving you valuable time.'
               },
               {
                 question: 'How long does the approval process take?',

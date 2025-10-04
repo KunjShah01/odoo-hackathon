@@ -4,7 +4,8 @@ import { Input, Select, TextArea } from './ui/Input';
 import { Button } from './ui/Button';
 import { useAuth } from '../context/AuthContext';
 import { useExpenseStore } from '../store/useExpenseStore';
-import { Upload, Sparkles } from 'lucide-react';
+import { Upload, Sparkles, AlertCircle } from 'lucide-react';
+import { extractReceiptData, isValidReceiptFile, getReceiptPreviewUrl } from '../services/ocrService';
 
 interface AddExpenseModalProps {
   isOpen: boolean;
@@ -13,8 +14,9 @@ interface AddExpenseModalProps {
 
 export function AddExpenseModal({ isOpen, onClose }: AddExpenseModalProps) {
   const { user } = useAuth();
-    const { createExpense, submitExpenseForApproval } = useExpenseStore();
+  const { createExpense, submitExpenseForApproval } = useExpenseStore();
   const [isOCRProcessing, setIsOCRProcessing] = useState(false);
+  const [ocrError, setOcrError] = useState<string | null>(null);
 
   const [formData, setFormData] = useState({
     date: new Date().toISOString().split('T')[0],
@@ -31,25 +33,40 @@ export function AddExpenseModal({ isOpen, onClose }: AddExpenseModalProps) {
     const file = e.target.files?.[0];
     if (!file) return;
 
+    // Validate file type
+    if (!isValidReceiptFile(file)) {
+      setOcrError('Invalid file type. Please upload a JPG, PNG, PDF, or HEIC file.');
+      return;
+    }
+
     setIsOCRProcessing(true);
+    setOcrError(null);
 
-    await new Promise(resolve => setTimeout(resolve, 1500));
+    try {
+      // Extract data using OCR
+      const extractedData = await extractReceiptData(file);
 
-    const mockOCRData = {
-      merchant: 'Demo Restaurant',
-      amount: '42.50',
-      date: new Date().toISOString().split('T')[0],
-      category: 'Meals',
-      description: 'Business Lunch'
-    };
-
-    setFormData(prev => ({
-      ...prev,
-      ...mockOCRData,
-      receiptUrl: URL.createObjectURL(file)
-    }));
-
-    setIsOCRProcessing(false);
+      // Update form with extracted data
+      setFormData(prev => ({
+        ...prev,
+        merchant: extractedData.merchant || prev.merchant,
+        amount: extractedData.amount || prev.amount,
+        date: extractedData.date || prev.date,
+        category: extractedData.category || prev.category,
+        description: extractedData.description || prev.description,
+        receiptUrl: getReceiptPreviewUrl(file)
+      }));
+    } catch (error) {
+      console.error('OCR processing error:', error);
+      setOcrError('Failed to extract receipt data. You can still enter details manually.');
+      // Still set the receipt preview even if OCR fails
+      setFormData(prev => ({
+        ...prev,
+        receiptUrl: getReceiptPreviewUrl(file)
+      }));
+    } finally {
+      setIsOCRProcessing(false);
+    }
   };
 
   const handleSubmit = async (isDraft: boolean) => {
@@ -88,10 +105,21 @@ export function AddExpenseModal({ isOpen, onClose }: AddExpenseModalProps) {
   return (
     <Modal isOpen={isOpen} onClose={onClose} title="Add New Expense" size="lg">
       <div className="p-6 space-y-6">
+        {/* OCR Error Message */}
+        {ocrError && (
+          <div className="bg-red-50 border border-red-200 rounded-lg p-4 flex items-start gap-3">
+            <AlertCircle className="text-red-600 flex-shrink-0 mt-0.5" size={20} />
+            <div>
+              <p className="text-sm font-medium text-red-900">OCR Processing Error</p>
+              <p className="text-sm text-red-700 mt-1">{ocrError}</p>
+            </div>
+          </div>
+        )}
+
         <div className="border-2 border-dashed border-slate-300 rounded-lg p-8 text-center hover:border-teal-500 transition-colors">
           <input
             type="file"
-            accept="image/*"
+            accept="image/*,.pdf"
             onChange={handleFileUpload}
             className="hidden"
             id="receipt-upload"

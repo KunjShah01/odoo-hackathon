@@ -5,7 +5,7 @@ import { StatusTag } from '../components/ui/StatusTag';
 import { useAuth } from '../context/AuthContext';
 import { useExpenseStore } from '../store/useExpenseStore';
 import { Plus, Eye, DollarSign } from 'lucide-react';
-import { AddExpenseModal } from '../components/AddExpenseModal';
+import { AddExpenseModalEnhanced } from '../components/AddExpenseModalEnhanced';
 import { ExpenseDetailModal } from '../components/ExpenseDetailModal';
 import { Expense } from '../types';
 
@@ -157,7 +157,7 @@ export function EmployeeDashboard() {
         </div>
       </Card>
 
-      <AddExpenseModal
+      <AddExpenseModalEnhanced
         isOpen={isAddModalOpen}
         onClose={() => setIsAddModalOpen(false)}
       />
