@@ -2,6 +2,8 @@ const { createWorker } = require('tesseract.js');
 const path = require('path');
 const fs = require('fs').promises;
 
+// Define the upload directory (adjust as needed to match actual temp upload directory)
+const UPLOADS_DIR = path.resolve(__dirname, '../../uploads');
 const extractText = async (req, res) => {
   let worker;
 
@@ -17,7 +19,13 @@ const extractText = async (req, res) => {
     const { data: { text } } = await worker.recognize(req.file.path);
 
     // Clean up uploaded file
-    await fs.unlink(req.file.path);
+    // Securely resolve and validate the file path
+    const resolvedFilePath = path.resolve(req.file.path);
+    if (resolvedFilePath.startsWith(UPLOADS_DIR)) {
+      await fs.unlink(resolvedFilePath);
+    } else {
+      console.warn('Attempted to unlink file outside upload directory:', resolvedFilePath);
+    }
 
     // Basic text processing to extract potential expense information
     const extractedData = {
@@ -37,7 +45,12 @@ const extractText = async (req, res) => {
     // Clean up uploaded file if it exists
     if (req.file && req.file.path) {
       try {
-        await fs.unlink(req.file.path);
+        const resolvedFilePath = path.resolve(req.file.path);
+        if (resolvedFilePath.startsWith(UPLOADS_DIR)) {
+          await fs.unlink(resolvedFilePath);
+        } else {
+          console.warn('Attempted to unlink file outside upload directory during cleanup:', resolvedFilePath);
+        }
       } catch (cleanupError) {
         console.error('Error cleaning up file:', cleanupError);
       }
