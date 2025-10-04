@@ -1,6 +1,12 @@
 const axios = require('axios');
 const Joi = require('joi');
 
+// Allow-list of supported ISO currency codes (add or refine as needed)
+const ALLOWED_CURRENCIES = [
+  "USD", "EUR", "GBP", "JPY", "CAD", "AUD", "CHF", "CNY", "NZD", "SEK",
+  "MXN", "SGD", "HKD", "NOK", "KRW", "TRY", "RUB", "INR", "BRL", "ZAR"
+];
+
 const convertSchema = Joi.object({
   from: Joi.string().length(3).required(),
   to: Joi.string().length(3).required(),
@@ -9,7 +15,16 @@ const convertSchema = Joi.object({
 
 const getExchangeRates = async (req, res) => {
   try {
-    const { base = 'USD' } = req.query;
+    let { base = 'USD' } = req.query;
+    // Normalize and validate base currency
+    if (typeof base === "string") {
+      base = base.toUpperCase();
+    } else {
+      base = "USD";
+    }
+    if (!ALLOWED_CURRENCIES.includes(base)) {
+      return res.status(400).json({ error: `Currency ${base} not supported` });
+    }
 
     // Using a free exchange rate API (you may want to use a paid service for production)
     const response = await axios.get(`${process.env.CURRENCY_API_URL}/${base}`, {
