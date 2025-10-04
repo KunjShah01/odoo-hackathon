@@ -3,6 +3,11 @@
 Welcome! This guide helps you quickly test and evaluate the **Expense Management System**.
 
 ---
+# 🎯 For Reviewers & Evaluators
+
+Welcome! This guide helps you quickly test and evaluate the **Expense Management System**.
+
+---
 
 ## 🚀 Quick Access
 
@@ -18,10 +23,12 @@ Welcome! This guide helps you quickly test and evaluate the **Expense Management
 All passwords are: **`password`**
 
 ### 👑 Admin Account - Full System Access
+
 ```
 Email: sarah.admin@techcorp.com
 Password: password
 ```
+
 **What you can test:**
 - User management (add/edit/delete users)
 - Approval rules configuration
@@ -32,10 +39,12 @@ Password: password
 ---
 
 ### 🧑‍💼 Manager Account - Approval Authority
+
 ```
 Email: mike.manager@techcorp.com
 Password: password
 ```
+
 **What you can test:**
 - View pending expense approvals
 - Approve or reject expense requests
@@ -46,10 +55,12 @@ Password: password
 ---
 
 ### 🧑‍💻 Employee Account - Standard User
+
 ```
 Email: alice.employee@techcorp.com
 Password: password
 ```
+
 **What you can test:**
 - Submit new expense claims
 - Upload receipt images
@@ -63,18 +74,21 @@ Password: password
 ### 🟡 Additional Test Accounts
 
 **CFO Account** (Financial oversight)
+
 ```
 Email: robert.cfo@techcorp.com
 Password: password
 ```
 
 **Developer Account**
+
 ```
 Email: bob.dev@techcorp.com
 Password: password
 ```
 
 **Designer Account**
+
 ```
 Email: emma.designer@techcorp.com
 Password: password
