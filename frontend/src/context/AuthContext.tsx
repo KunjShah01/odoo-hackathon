@@ -10,19 +10,13 @@ interface AuthContextType {
   isLoading: boolean;
 }
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+export const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const storedUserId = localStorage.getItem('userId');
-    if (storedUserId) {
-      const foundUser = MOCK_USERS.find(u => u.id === storedUserId);
-      if (foundUser) {
-        setUser(foundUser);
-      }
     const storedUser = localStorage.getItem('user');
     const storedToken = localStorage.getItem('authToken');
     if (storedUser && storedToken) {
@@ -37,19 +31,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setIsLoading(false);
   }, []);
 
-  const login = async (email: string, password: string, role: string) => {
-    setIsLoading(true);
-    await new Promise(resolve => setTimeout(resolve, 500));
-
-    const foundUser = MOCK_USERS.find(u => u.email === email && u.role === role);
-    if (foundUser) {
-      setUser(foundUser);
-      localStorage.setItem('userId', foundUser.id);
-    } else {
-      throw new Error('Invalid credentials');
-    }
-
-    setIsLoading(false);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const login = async (email: string, _password: string) => {
     try {
@@ -89,9 +70,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         avatar: '/assets/avatars/avatar2.svg'
       };
 
-    setUser(newUser);
-    localStorage.setItem('userId', newUser.id);
-    setIsLoading(false);
       localStorage.setItem('user', JSON.stringify(userData));
       localStorage.setItem('authToken', 'mock-token');
       console.log('AuthContext: Setting user state:', userData);
@@ -105,7 +83,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const logout = () => {
     setUser(null);
-    localStorage.removeItem('userId');
     localStorage.removeItem('user');
     localStorage.removeItem('authToken');
   };

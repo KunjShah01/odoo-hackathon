@@ -5,9 +5,10 @@ import { EmployeeDashboard } from './pages/EmployeeDashboard';
 import { ManagerApprovals } from './pages/ManagerApprovals';
 import { AdminPanel } from './pages/AdminPanel';
 import { Layout } from './components/Layout';
+import { User } from './types';
 
 function AppContent() {
-  const { user, isLoading } = useAuth();
+  const { user, isLoading } = useAuth() as { user: User | null; isLoading: boolean };
   const [currentView, setCurrentView] = useState('dashboard');
 
   console.log('AppContent render - user:', user, 'isLoading:', isLoading);

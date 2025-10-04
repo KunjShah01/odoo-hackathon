@@ -7,19 +7,38 @@
 
 ---
 
+## 🚀 Quick Start for Reviewers
+
+**Want to test the app immediately?** Here are the demo credentials:
+
+```
+👑 Admin:    sarah.admin@techcorp.com / password
+🧑‍💼 Manager:  mike.manager@techcorp.com / password  
+🧑‍💻 Employee: alice.employee@techcorp.com / password
+```
+
+**Access the app:**
+- Frontend: http://localhost:5175
+- Backend API: http://localhost:3001
+
+**More details:** See [Demo Credentials](#-demo-credentials-for-testing) section below
+
+---
+
 ## 📚 Table of Contents
 
-- [Overview](#overview)
-- [System Architecture](#system-architecture)
-- [Features](#features)
-- [User Roles](#user-roles)
-- [Approval Workflow](#approval-workflow)
-- [Interface Walkthrough](#interface-walkthrough)
-- [Data Model](#data-model)
-- [Getting Started](#getting-started)
-- [Contribution](#contribution)
-- [License](#license)
-- [Contact & Support](#contact--support)
+- [Overview](#-overview)
+- [System Architecture](#️-system-architecture)
+- [Features](#-features)
+- [User Roles](#-user-roles)
+- [Approval Workflow](#-approval-workflow)
+- [Interface Walkthrough](#️-interface-walkthrough)
+- [Data Model](#️-data-model-simplified)
+- [Getting Started](#️-getting-started)
+- [Demo Credentials](#-demo-credentials-for-testing)
+- [Contribution](#-contribution)
+- [License](#-license)
+- [Contact & Support](#-contact--support)
 
 ---
 
@@ -151,26 +170,119 @@ Below is a diagram illustrating the user journeys, interfaces, and workflow:
 
 ## 🛠️ Getting Started
 
-> _Add specific setup instructions for your stack (Node.js, Python, etc.) here._
+### Prerequisites
+- Node.js (v16 or higher)
+- PostgreSQL (v12 or higher)
+- npm or yarn
+
+### Quick Start
 
 1. **Clone the Repository**
     ```sh
-    git clone https://github.com/your-org/expense-management-system.git
-    cd expense-management-system
+    git clone https://github.com/KunjShah01/odoo-hackathon.git
+    cd odoo-hackathon
     ```
-2. **Install Dependencies**
-    ```sh
-    npm install
-    ```
-3. **Configure Environment**
-    - Set up `.env` file with DB credentials, API keys (currency conversion, OCR), etc.
 
-4. **Run the Application**
+2. **Setup Database**
     ```sh
-    npm start
+    cd database
+    # Follow instructions in database/README.md to setup PostgreSQL
+    # Run init.sql and seed.sql to create tables and demo data
     ```
+
+3. **Setup Backend**
+    ```sh
+    cd backend
+    npm install
+    # Configure .env file with database credentials
+    npm start
+    # Backend will run on http://localhost:3001
+    ```
+
+4. **Setup Frontend**
+    ```sh
+    cd frontend
+    npm install
+    npm run dev -- --port 5175
+    # Frontend will run on http://localhost:5175
+    ```
+
 5. **Open in Browser**
-    - Default: http://localhost:3000
+    - **Frontend:** http://localhost:5175
+    - **Backend API:** http://localhost:3001
+    - **Health Check:** http://localhost:3001/health
+
+6. **Login with Demo Credentials**
+    - See the [Demo Credentials](#-demo-credentials-for-testing) section below
+    - Use any of the provided accounts to explore different user roles
+
+---
+
+## 🔐 Demo Credentials for Testing
+
+The application comes with **pre-seeded demo accounts** for immediate testing. All passwords are: **`password`**
+
+### 👑 Admin Account
+```
+Email: sarah.admin@techcorp.com
+Password: password
+```
+**Access:** Full system administration, user management, approval rules setup
+
+### 🧑‍💼 Manager Account
+```
+Email: mike.manager@techcorp.com
+Password: password
+```
+**Access:** Approve/reject expenses, view team submissions
+
+### 🧑‍💻 Employee Accounts
+
+**Employee 1 - Alice**
+```
+Email: alice.employee@techcorp.com
+Password: password
+```
+**Access:** Submit expenses, view approval status
+
+**Employee 2 - Bob (Developer)**
+```
+Email: bob.dev@techcorp.com
+Password: password
+```
+
+**Employee 3 - Emma (Designer)**
+```
+Email: emma.designer@techcorp.com
+Password: password
+```
+
+### 🟡 CFO Account
+```
+Email: robert.cfo@techcorp.com
+Password: password
+```
+**Access:** Financial oversight, high-level approvals
+
+### 📊 Demo Company
+- **Company Name:** TechCorp Solutions
+- **Base Currency:** USD
+- **Country:** United States
+
+### 🧪 Testing Scenarios
+
+| Scenario | Use This Account | What You Can Test |
+|----------|------------------|-------------------|
+| Submit Expenses | alice.employee@techcorp.com | Create new expenses, upload receipts, track status |
+| Approve Expenses | mike.manager@techcorp.com | Review pending requests, approve/reject with comments |
+| System Admin | sarah.admin@techcorp.com | Manage users, configure approval rules, view analytics |
+| Financial Review | robert.cfo@techcorp.com | High-level financial oversight and approvals |
+
+### ⚠️ Security Note
+**These are DEMO credentials for development and testing only.**
+- Do NOT use these credentials in production
+- Change all passwords before deploying to production
+- Use strong passwords (min 8 characters with mixed case, numbers, and symbols)
 
 ---
 

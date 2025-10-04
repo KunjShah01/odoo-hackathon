@@ -1,8 +1,8 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { Input } from '../components/ui/Input';
 import { Button } from '../components/ui/Button';
-import { Receipt, Sparkles, Zap, Shield, TrendingUp, CheckCircle, ArrowRight, Globe, Clock } from 'lucide-react';
+import { Receipt, Sparkles, Zap, Shield, TrendingUp, CheckCircle, ArrowRight, Globe, Clock, Users, BarChart3, FileText, CreditCard, Smartphone, Lock, Star, CheckCircle2, DollarSign, Award, Target, Rocket } from 'lucide-react';
 
 export function Login() {
   const [isSignup, setIsSignup] = useState(false);
