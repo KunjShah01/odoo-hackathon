@@ -24,6 +24,10 @@ export interface Expense {
   status: ExpenseStatus;
   created_at: string;
   updated_at: string;
+  merchant?: string;
+  notes?: string;
+  receipt_url?: string;
+  user_name?: string;
 }
 
 export interface ApprovalStep {
@@ -56,4 +60,23 @@ export interface Approval {
   currency_code: string;
   category?: string;
   expense_date: string;
+  id?: string;
+  approver_name?: string;
+  decided_at?: string;
 }
+
+export interface Category {
+  id: string;
+  name: string;
+  color: string;
+  icon?: string;
+}
+
+export interface ReportData {
+  period: string;
+  total: number;
+  byCategory: Record<string, number>;
+  topMerchants: Array<{ merchant: string; total: number }>;
+  monthlyTrend: Array<{ month: string; amount: number }>;
+}
+

@@ -1,1 +1,8 @@
 .env
+.env.*
+!.env.example
+
+uploads/
+coverage/
+node_modules/
+*.log

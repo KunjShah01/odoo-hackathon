@@ -1,4 +1,3 @@
-import React from 'react';
 import { ExpenseStatus, ApprovalStatus } from '../../types';
 
 interface StatusTagProps {

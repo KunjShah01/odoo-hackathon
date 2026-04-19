@@ -1,6 +1,7 @@
 import { useState } from 'react';
-import { Expense, Approval, ApprovalFlow } from '../types';
+import { Expense, Approval, ApprovalFlow, Category, ReportData } from '../types';
 import { apiService, ApiError } from '../services/api';
+
 
 export function useExpenseStore() {
   const [expenses, setExpenses] = useState<Expense[]>([
@@ -46,8 +47,18 @@ export function useExpenseStore() {
     }
   ]);
   const [flows, setFlows] = useState<ApprovalFlow[]>([]);
+  const [categories, setCategories] = useState<Category[]>([
+    { id: 'meals', name: 'Meals & Entertainment', color: '#10b981', icon: '🍽️' },
+    { id: 'travel', name: 'Travel & Lodging', color: '#3b82f6', icon: '✈️' },
+    { id: 'supplies', name: 'Office Supplies', color: '#f59e0b', icon: '📦' },
+    { id: 'software', name: 'Software', color: '#8b5cf6', icon: '💻' },
+    { id: 'marketing', name: 'Marketing', color: '#ef4444', icon: '📣' },
+    { id: 'other', name: 'Other', color: '#6b7280', icon: '📋' }
+  ]);
+  const [reportData, setReportData] = useState<ReportData | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
 
   const fetchExpenses = async (page = 1, limit = 10, status?: string) => {
     setLoading(true);
@@ -229,6 +240,61 @@ export function useExpenseStore() {
     }
   };
 
+  const getCategories = () => {
+    return categories;
+  };
+
+  const createCategory = (newCat: Omit<Category, 'id'>) => {
+    const category: Category = {
+      id: Date.now().toString(),
+      ...newCat
+    };
+    setCategories(prev => [...prev, category]);
+    return category;
+  };
+
+  const deleteCategory = (id: string) => {
+    setCategories(prev => prev.filter(c => c.id !== id));
+  };
+
+  const fetchReports = async () => {
+    setLoading(true);
+    try {
+      // Mock reports from expenses
+      const userExpenses = expenses.filter(e => e.user_id === '1'); // Mock user
+      const total = userExpenses.reduce((sum, e) => sum + e.amount, 0);
+      const byCategory = userExpenses.reduce((acc, e) => {
+        acc[e.category || 'Other'] = (acc[e.category || 'Other'] || 0) + e.amount;
+        return acc;
+      }, {} as Record<string, number>);
+
+      const topMerchants = [...new Array(5)].map((_, i) => ({
+        merchant: `Merchant ${i + 1}`,
+        total: Math.random() * 1000 + 100
+      })).slice(0, 5);
+
+      const monthlyTrend = [
+        { month: 'Jan', amount: 1200 },
+        { month: 'Feb', amount: 1900 },
+        { month: 'Mar', amount: 1500 },
+        { month: 'Apr', amount: 2200 },
+        { month: 'May', amount: 1800 }
+      ];
+
+      const reports: ReportData = {
+        period: 'Last 6 months',
+        total,
+        byCategory,
+        topMerchants,
+        monthlyTrend
+      };
+      setReportData(reports);
+      return reports;
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const saveFlows = (newFlows: ApprovalFlow[]) => {
     setFlows(newFlows);
   };
@@ -239,6 +305,8 @@ export function useExpenseStore() {
     expenses,
     approvals,
     flows,
+    categories,
+    reportData,
     loading,
     error,
     fetchExpenses,
@@ -251,5 +319,10 @@ export function useExpenseStore() {
     approveExpense,
     rejectExpense,
     saveFlows,
+    getCategories,
+    createCategory,
+    deleteCategory,
+    fetchReports
   };
 }
+

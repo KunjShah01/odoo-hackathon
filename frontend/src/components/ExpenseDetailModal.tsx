@@ -1,4 +1,3 @@
-import React from 'react';
 import { Modal } from './ui/Modal';
 import { StatusTag } from './ui/StatusTag';
 import { Expense } from '../types';
@@ -13,7 +12,7 @@ interface ExpenseDetailModalProps {
 
 export function ExpenseDetailModal({ expense, isOpen, onClose }: ExpenseDetailModalProps) {
   const { approvals } = useExpenseStore();
-  const expenseApprovals = approvals.filter(a => a.expenseId === expense.id);
+  const expenseApprovals = approvals.filter(a => a.expense_id === expense.id);
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} title="Expense Details" size="lg">
@@ -34,7 +33,7 @@ export function ExpenseDetailModal({ expense, isOpen, onClose }: ExpenseDetailMo
               </div>
               <div>
                 <p className="text-sm text-slate-600 font-medium">Date</p>
-                <p className="text-slate-900">{new Date(expense.date).toLocaleDateString()}</p>
+                <p className="text-slate-900">{new Date(expense.expense_date).toLocaleDateString()}</p>
               </div>
             </div>
 
@@ -45,7 +44,7 @@ export function ExpenseDetailModal({ expense, isOpen, onClose }: ExpenseDetailMo
               <div>
                 <p className="text-sm text-slate-600 font-medium">Amount</p>
                 <p className="text-2xl font-bold text-slate-900">
-                  {expense.currency} {expense.amount.toFixed(2)}
+                  {expense.currency_code} {expense.amount.toFixed(2)}
                 </p>
               </div>
             </div>
@@ -66,7 +65,7 @@ export function ExpenseDetailModal({ expense, isOpen, onClose }: ExpenseDetailMo
               </div>
               <div>
                 <p className="text-sm text-slate-600 font-medium">Submitted By</p>
-                <p className="text-slate-900">{expense.userName}</p>
+                <p className="text-slate-900">{expense.user_name}</p>
               </div>
             </div>
 
@@ -78,17 +77,17 @@ export function ExpenseDetailModal({ expense, isOpen, onClose }: ExpenseDetailMo
             )}
           </div>
 
-          {expense.receiptUrl && (
+          {expense.receipt_url && (
             <div>
               <div className="flex items-center gap-2 mb-3">
                 <Image className="text-slate-600" size={20} />
                 <p className="text-sm text-slate-600 font-medium">Receipt</p>
               </div>
               <img
-                src={expense.receiptUrl}
+                src={expense.receipt_url}
                 alt="Receipt"
                 className="w-full rounded-lg border border-slate-200 cursor-pointer hover:opacity-90 transition-opacity"
-                onClick={() => window.open(expense.receiptUrl, '_blank')}
+                onClick={() => window.open(expense.receipt_url, '_blank')}
               />
             </div>
           )}
@@ -100,21 +99,21 @@ export function ExpenseDetailModal({ expense, isOpen, onClose }: ExpenseDetailMo
             <div className="space-y-3">
               {expenseApprovals.map(approval => (
                 <div
-                  key={approval.id}
+                  key={approval.approval_id}
                   className="flex items-start gap-3 p-4 bg-slate-50 rounded-lg"
                 >
                   <div className="w-2 h-2 bg-teal-500 rounded-full mt-2" />
                   <div className="flex-1">
                     <div className="flex items-center justify-between mb-1">
-                      <p className="font-medium text-slate-900">{approval.approverName}</p>
+                      <p className="font-medium text-slate-900">{approval.approver_name}</p>
                       <StatusTag status={approval.status} />
                     </div>
                     {approval.comments && (
                       <p className="text-sm text-slate-600 mt-1">{approval.comments}</p>
                     )}
                     <p className="text-xs text-slate-500 mt-1">
-                      {approval.decidedAt
-                        ? new Date(approval.decidedAt).toLocaleString()
+                      {approval.decided_at
+                        ? new Date(approval.decided_at).toLocaleString()
                         : 'Pending'}
                     </p>
                   </div>
