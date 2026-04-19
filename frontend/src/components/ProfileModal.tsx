@@ -1,15 +1,14 @@
-// using the new JSX transform; no default React import needed
 import { Modal } from './ui/Modal';
 import { Button } from './ui/Button';
-import { User } from '../types';
+import { useAuth } from '../context/AuthContext';
 
 interface ProfileModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  user: User | null;
+  isOpen?: boolean;
+  onClose?: () => void;
 }
 
-export function ProfileModal({ isOpen, onClose, user }: ProfileModalProps) {
+export function ProfileModal({ isOpen = true, onClose = () => {} }: ProfileModalProps) {
+  const { user } = useAuth();
   if (!user) return null;
 
   return (

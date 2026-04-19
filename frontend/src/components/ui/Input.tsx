@@ -24,12 +24,18 @@ export function Input({ label, error, className = '', ...props }: InputProps) {
   );
 }
 
+interface SelectOption {
+  value: string;
+  label: string;
+}
+
 interface SelectProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
   label?: string;
   error?: string;
+  options?: SelectOption[];
 }
 
-export function Select({ label, error, className = '', children, ...props }: SelectProps) {
+export function Select({ label, error, className = '', options, children, ...props }: SelectProps) {
   return (
     <div className="w-full">
       {label && (
@@ -43,7 +49,13 @@ export function Select({ label, error, className = '', children, ...props }: Sel
         } ${className}`}
         {...props}
       >
-        {children}
+        {options ? (
+          options.map(option => (
+            <option key={option.value} value={option.value}>
+              {option.label}
+            </option>
+          ))
+        ) : children}
       </select>
       {error && <p className="mt-1 text-sm text-red-500">{error}</p>}
     </div>
