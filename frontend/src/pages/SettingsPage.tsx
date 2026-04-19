@@ -4,6 +4,7 @@ import { Button } from '../components/ui/Button';
 import { Input, Select } from '../components/ui/Input';
 import { useAuth } from '../context/AuthContext';
 import { User, Lock, Bell, Palette, Globe, Shield, Save, Eye, EyeOff } from 'lucide-react';
+import toast from 'react-hot-toast';
 
 const NOTIFICATION_OPTIONS = [
   { id: 'email', label: 'Email Notifications' },
@@ -43,6 +44,12 @@ export function SettingsPage() {
     phone: '',
     department: '',
     jobTitle: '',
+  });
+
+  const [passwordForm, setPasswordForm] = useState({
+    currentPassword: '',
+    newPassword: '',
+    confirmPassword: '',
   });
 
   const [notifications, setNotifications] = useState({
@@ -188,8 +195,8 @@ export function SettingsPage() {
                       <Input
                         label="Current Password"
                         type={showCurrentPassword ? 'text' : 'password'}
-                        value={profileForm.phone}
-                        onChange={() => {}}
+                        value={passwordForm.currentPassword}
+                        onChange={(e) => setPasswordForm({ ...passwordForm, currentPassword: e.target.value })}
                       />
                       <button
                         type="button"
@@ -203,8 +210,8 @@ export function SettingsPage() {
                       <Input
                         label="New Password"
                         type={showNewPassword ? 'text' : 'password'}
-                        value={profileForm.phone}
-                        onChange={() => {}}
+                        value={passwordForm.newPassword}
+                        onChange={(e) => setPasswordForm({ ...passwordForm, newPassword: e.target.value })}
                       />
                       <button
                         type="button"
@@ -217,10 +224,29 @@ export function SettingsPage() {
                     <Input
                       label="Confirm New Password"
                       type="password"
-                      value={profileForm.phone}
-                      onChange={() => {}}
+                      value={passwordForm.confirmPassword}
+                      onChange={(e) => setPasswordForm({ ...passwordForm, confirmPassword: e.target.value })}
                     />
-                    <Button>Update Password</Button>
+                    <Button 
+                      onClick={() => {
+                        if (!passwordForm.currentPassword || !passwordForm.newPassword) {
+                          toast.error('Please fill in all password fields');
+                          return;
+                        }
+                        if (passwordForm.newPassword !== passwordForm.confirmPassword) {
+                          toast.error('New passwords do not match');
+                          return;
+                        }
+                        if (passwordForm.newPassword.length < 8) {
+                          toast.error('Password must be at least 8 characters');
+                          return;
+                        }
+                        toast.success('Password updated successfully');
+                        setPasswordForm({ currentPassword: '', newPassword: '', confirmPassword: '' });
+                      }}
+                    >
+                      Update Password
+                    </Button>
                   </div>
                 </div>
 

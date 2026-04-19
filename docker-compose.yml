@@ -1,0 +1,63 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:16-alpine
+    container_name: expenseflow-db
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: expenseflow123
+      POSTGRES_DB: expenseflow
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./database/db:/docker-entrypoint-initdb.d
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Backend API
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: expenseflow-api
+    restart: always
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      - NODE_ENV=production
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_NAME=expenseflow
+      - DB_USER=postgres
+      - DB_PASSWORD=expenseflow123
+      - JWT_SECRET=${JWT_SECRET:-your-super-secret-jwt-key-change-this-in-production}
+      - CORS_ORIGIN=http://localhost:5173,http://127.0.0.1:5173
+    ports:
+      - "3001:3001"
+    volumes:
+      - ./backend/uploads:/app/uploads
+
+  # Frontend
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: expenseflow-web
+    restart: always
+    depends_on:
+      - backend
+    environment:
+      - VITE_API_URL=http://localhost:3001
+    ports:
+      - "5173:5173"
+
+volumes:
+  postgres_data:

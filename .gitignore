@@ -26,8 +26,14 @@ pnpm-debug.log*
 .env
 .env.*
 !.env.example
+!backend/.env.example
+!frontend/.env.example
 backend/.env
+backend/.env.local
+backend/.env.production
 frontend/.env
+frontend/.env.local
+frontend/.env.production
 
 # Uploads and generated artifacts
 backend/uploads/
