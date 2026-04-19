@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, ScanLine, ArrowRight, CheckCircle, Sparkles } from 'lucide-react';
+import { ArrowLeft, ScanLine, CheckCircle, Workflow, Globe, BarChart3, Users, Shield, Sparkles } from 'lucide-react';
 import { Button } from '../components/ui/Button';
 import { PublicNavbar } from '../components/PublicNavbar';
 

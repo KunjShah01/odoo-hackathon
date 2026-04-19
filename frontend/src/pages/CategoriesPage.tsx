@@ -13,7 +13,6 @@ import {
   ShoppingBag, 
   Car, 
   Utensils, 
-  Home, 
   Plane,
   FlaskConical,
   Gift,
